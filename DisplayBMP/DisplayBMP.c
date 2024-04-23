@@ -135,11 +135,13 @@ DisplayImage( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
     Palette    = (UINT32*) ((UINT8*)BmpBuffer + 0x36);
     Pixels     = BmpHeader->PixelWidth * BmpHeader->PixelHeight;
 
-    BltBuffer = AllocateZeroPool( sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL) * Pixels);
-    if (BltBuffer == NULL) {
-        Print(L"ERROR: BltBuffer. No memory resources\n");
-        return EFI_OUT_OF_RESOURCES;
-    }
+    //VULN: Allocate buffer from headr size field and not from calculated Width * Height
+	//BltBuffer = AllocateZeroPool( sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL) * Pixels);
+	BltBuffer = AllocateZeroPool(BmpHeader->ImageSize);
+    // if (BltBuffer == NULL) {
+        // Print(L"ERROR: BltBuffer. No memory resources\n");
+        // return EFI_OUT_OF_RESOURCES;
+    // }
 
     Image       = (UINT8 *)BmpBuffer;
     BmpColorMap = (BMP_COLOR_MAP *) (Image + sizeof (BMP_IMAGE_HEADER));
@@ -366,10 +368,10 @@ CheckBMPHeader( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
     if (BmpBuffer == NULL) {
         return EFI_INVALID_PARAMETER;
     } 
-    if (BmpImageSize < sizeof (BMP_IMAGE_HEADER)) {
-        Print(L"ERROR: BmpImageSize too small\n");
-        return EFI_INVALID_PARAMETER;
-    }
+    // if (BmpImageSize < sizeof (BMP_IMAGE_HEADER)) {
+        // Print(L"ERROR: BmpImageSize too small\n");
+        // return EFI_INVALID_PARAMETER;
+    // }
 
     BmpHeader = (BMP_IMAGE_HEADER *) BmpBuffer;
 
@@ -380,11 +382,11 @@ CheckBMPHeader( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
     }
 
     // BITMAPINFOHEADER format unsupported
-    if (BmpHeader->HeaderSize != sizeof (BMP_IMAGE_HEADER) \
-        - ((UINTN) &(((BMP_IMAGE_HEADER *)0)->HeaderSize))) {
-        Print(L"ERROR: Unsupported BITMAPFILEHEADER\n");
-        return EFI_UNSUPPORTED;
-    }
+    // if (BmpHeader->HeaderSize != sizeof (BMP_IMAGE_HEADER) \
+        // - ((UINTN) &(((BMP_IMAGE_HEADER *)0)->HeaderSize))) {
+        // Print(L"ERROR: Unsupported BITMAPFILEHEADER\n");
+        // return EFI_UNSUPPORTED;
+    // }
 
     // compression type not 0
     if (BmpHeader->CompressionType != 0) {
@@ -392,27 +394,27 @@ CheckBMPHeader( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
         return EFI_UNSUPPORTED;
     }
 
-    if ((BmpHeader->PixelHeight == 0) || (BmpHeader->PixelWidth == 0)) {
-        Print(L"ERROR: BMP Header PixelHeight or PixelWidth is 0\n");
-        return EFI_UNSUPPORTED;
-    }
+    // if ((BmpHeader->PixelHeight == 0) || (BmpHeader->PixelWidth == 0)) {
+        // Print(L"ERROR: BMP Header PixelHeight or PixelWidth is 0\n");
+        // return EFI_UNSUPPORTED;
+    // }
 
-    // data size in each line must be 4 byte aligned
-    Status = SafeUint32Mult( BmpHeader->PixelWidth,
-                             BmpHeader->BitPerPixel,
-                             &DataSizePerLine );
-    if (EFI_ERROR (Status)) {
-        Print(L"ERROR: Invalid BMP. PixelWidth or BitPerPixel\n");
-        return EFI_UNSUPPORTED;
-    }
+    // // data size in each line must be 4 byte aligned
+    // Status = SafeUint32Mult( BmpHeader->PixelWidth,
+                             // BmpHeader->BitPerPixel,
+                             // &DataSizePerLine );
+    // if (EFI_ERROR (Status)) {
+        // Print(L"ERROR: Invalid BMP. PixelWidth or BitPerPixel\n");
+        // return EFI_UNSUPPORTED;
+    // }
 
-    Status = SafeUint32Add( DataSizePerLine, 
-                            31,
-                            &DataSizePerLine );
-    if (EFI_ERROR (Status)) {
-        Print(L"ERROR: Invalid BMP. DataSizePerLine\n");
-        return EFI_UNSUPPORTED;
-    }
+    // Status = SafeUint32Add( DataSizePerLine, 
+                            // 31,
+                            // &DataSizePerLine );
+    // if (EFI_ERROR (Status)) {
+        // Print(L"ERROR: Invalid BMP. DataSizePerLine\n");
+        // return EFI_UNSUPPORTED;
+    // }
 
     DataSizePerLine = (DataSizePerLine >> 3) &(~0x3);
     Status = SafeUint32Mult( DataSizePerLine,
@@ -441,10 +443,10 @@ CheckBMPHeader( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
     // calculate colormap offset in the image.
     Image       = (UINT8 *)BmpBuffer;
     BmpColorMap = (BMP_COLOR_MAP *) (Image + sizeof (BMP_IMAGE_HEADER));
-    if (BmpHeader->ImageOffset < sizeof (BMP_IMAGE_HEADER)) {
-        Print(L"ERROR: Invalid colormap offset\n");
-        return EFI_UNSUPPORTED;
-    }
+    // if (BmpHeader->ImageOffset < sizeof (BMP_IMAGE_HEADER)) {
+        // Print(L"ERROR: Invalid colormap offset\n");
+        // return EFI_UNSUPPORTED;
+    // }
 
     if (BmpHeader->ImageOffset > sizeof (BMP_IMAGE_HEADER)) {
         switch (BmpHeader->BitPerPixel) {
@@ -461,10 +463,10 @@ CheckBMPHeader( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
                 ColorMapNum = 0;
                 break;
         }
-        if (BmpHeader->ImageOffset - sizeof (BMP_IMAGE_HEADER) != sizeof (BMP_COLOR_MAP) * ColorMapNum) {
-            Print(L"ERROR: Invalid colormap offset\n");
-            return EFI_UNSUPPORTED;
-        }
+        // if (BmpHeader->ImageOffset - sizeof (BMP_IMAGE_HEADER) != sizeof (BMP_COLOR_MAP) * ColorMapNum) {
+            // Print(L"ERROR: Invalid colormap offset\n");
+            // return EFI_UNSUPPORTED;
+        // }
     }
 
     // image size less than screen size
