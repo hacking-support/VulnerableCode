@@ -431,12 +431,12 @@ CheckBMPHeader( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
         return EFI_UNSUPPORTED;
     }
 
-    if ((BmpHeader->Size != BmpImageSize) || 
-        (BmpHeader->Size < BmpHeader->ImageOffset) ||
-        (BmpHeader->Size - BmpHeader->ImageOffset !=  DataSize)) {
-        Print(L"ERROR: Invalid image size\n");
-        return EFI_UNSUPPORTED;
-    }
+    // if ((BmpHeader->Size != BmpImageSize) || 
+        // (BmpHeader->Size < BmpHeader->ImageOffset) ||
+        // (BmpHeader->Size - BmpHeader->ImageOffset !=  DataSize)) {
+        // Print(L"ERROR: Invalid image size\n");
+        // return EFI_UNSUPPORTED;
+    // }
 
     // calculate colormap offset in the image.
     Image       = (UINT8 *)BmpBuffer;
