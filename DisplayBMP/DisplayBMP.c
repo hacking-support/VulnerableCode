@@ -1,7 +1,7 @@
 //
 //  Copyright (c) 2015-2019   Finnbarr P. Murphy.   All rights reserved.
 //
-//  Display an uncompressed BMP image 
+//  Display an uncompressed BMP image
 //
 //  License: BSD 2 clause License
 //
@@ -100,7 +100,7 @@ AsciiToUnicodeSize( CHAR8 *String,
 // Display the BMP image, convert to 24-bit if necessary, scroll screen if necessary
 //
 EFI_STATUS
-DisplayImage( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop, 
+DisplayImage( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
               EFI_HANDLE *BmpBuffer )
 {
     EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
@@ -110,12 +110,12 @@ DisplayImage( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
     BMP_IMAGE_HEADER *BmpHeader;
     BMP_COLOR_MAP *BmpColorMap;
     EFI_STATUS Status = EFI_SUCCESS;
-    UINT32 *Palette;
-    UINT8  *BitmapData;
+    //UINT32 *Palette;
+    //UINT8  *BitmapData;
     UINT8  *Image;
     UINT8  *ImageHeader;
     UINTN  SizeOfInfo;
-    UINTN  Pixels;
+    //UINTN  Pixels;
     UINTN  Width, Height;
     UINTN  ImageIndex;
     UINTN  Index;
@@ -123,17 +123,17 @@ DisplayImage( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
     UINTN  ImageRows;
     UINTN  CurRow, CurCol;
     UINTN  MaxRows, MaxCols;
-    UINTN  VertPixelDelta = 0;		
-    UINTN  ImagePixelDelta = 0;		
+    UINTN  VertPixelDelta = 0;
+    UINTN  ImagePixelDelta = 0;
 
     if (BmpBuffer == NULL) {
         return RETURN_INVALID_PARAMETER;
     }
 
     BmpHeader  = (BMP_IMAGE_HEADER *) BmpBuffer;
-    BitmapData = (UINT8*)BmpBuffer + BmpHeader->ImageOffset;
-    Palette    = (UINT32*) ((UINT8*)BmpBuffer + 0x36);
-    Pixels     = BmpHeader->PixelWidth * BmpHeader->PixelHeight;
+    // BitmapData = (UINT8*)BmpBuffer + BmpHeader->ImageOffset;
+    // Palette    = (UINT32*) ((UINT8*)BmpBuffer + 0x36);
+    // Pixels     = BmpHeader->PixelWidth * BmpHeader->PixelHeight;
 
     //VULN: Allocate buffer from headr size field and not from calculated Width * Height
 	//BltBuffer = AllocateZeroPool( sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL) * Pixels);
@@ -222,9 +222,9 @@ DisplayImage( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
 #endif
 
     // get screen details for current mode
-    Gop->QueryMode( Gop, 
-                    Gop->Mode->Mode, 
-                    &SizeOfInfo, 
+    Gop->QueryMode( Gop,
+                    Gop->Mode->Mode,
+                    &SizeOfInfo,
                     &Info );
 
     // calculate required image and screen properties
@@ -233,7 +233,7 @@ DisplayImage( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
     ImageRows = ImageHeight/EFI_GLYPH_HEIGHT;
     if ((ImageRows * EFI_GLYPH_HEIGHT) < ImageHeight) {
         ImagePixelDelta = (ImageHeight - (ImageRows * EFI_GLYPH_HEIGHT))/2;
-        ImageRows++;        
+        ImageRows++;
     }
     if ((MaxRows * EFI_GLYPH_HEIGHT) < Info->VerticalResolution) {
         VertPixelDelta = (Info->VerticalResolution - (MaxRows * EFI_GLYPH_HEIGHT))/2;
@@ -244,50 +244,50 @@ DisplayImage( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
         GetBackgroundColor( &Background );
 
         // calculate number of rows to scroll
-        UINTN ScrollRows = (ImageRows - (MaxRows - CurRow) +1); 
+        UINTN ScrollRows = (ImageRows - (MaxRows - CurRow) +1);
 #ifdef DEBUG
-        Print(L"CurRow: %d  ImageRows: %d  ImagePixelDelta: %d  ScrollRows: %d  VertPixelDelta: %d\n", 
+        Print(L"CurRow: %d  ImageRows: %d  ImagePixelDelta: %d  ScrollRows: %d  VertPixelDelta: %d\n",
                 CurRow, ImageRows, ImagePixelDelta, ScrollRows, VertPixelDelta );
 #endif
 
-        // scroll up to make room to display image 
+        // scroll up to make room to display image
         Status = Gop->Blt( Gop,
                            NULL,
                            EfiBltVideoToVideo,
-                           0, VertPixelDelta + (ScrollRows * EFI_GLYPH_HEIGHT),  // Source X,Y        
+                           0, VertPixelDelta + (ScrollRows * EFI_GLYPH_HEIGHT),  // Source X,Y
                            0, VertPixelDelta,                                    // Destination X,Y
                            Width, (MaxRows - ScrollRows) * EFI_GLYPH_HEIGHT,
                            0 );
         if (EFI_ERROR (Status)) {
             Print(L"ERROR: Scroll Up, Gop->Blt [%d]\n", Status);
             goto cleanup;
-        } 
+        }
 
         // color background of the scrolled area
         Status = Gop->Blt( Gop,
                            &Background,
                            EfiBltVideoFill,
                            0, 0,                                // Not Used
-                           0, (MaxRows - ScrollRows) * EFI_GLYPH_HEIGHT, 
+                           0, (MaxRows - ScrollRows) * EFI_GLYPH_HEIGHT,
                            Width - 1, ScrollRows * EFI_GLYPH_HEIGHT,
                            0 );
         if (EFI_ERROR (Status)) {
             Print(L"ERROR: Color Fill, Gop->Blt [%d]\n", Status);
             goto cleanup;
-        } 
+        }
 
         // display the image
         Status = Gop->Blt( Gop,
                            BltBuffer,
                            EfiBltBufferToVideo,
-                           0, 0,                                                              // Source X,Y 
+                           0, 0,                                                              // Source X,Y
                            0, ImagePixelDelta + ((MaxRows - ImageRows) * EFI_GLYPH_HEIGHT),   // Destination X,Y
-                           BmpHeader->PixelWidth, BmpHeader->PixelHeight, 
+                           BmpHeader->PixelWidth, BmpHeader->PixelHeight,
                            0 );
         if (EFI_ERROR (Status)) {
             Print(L"ERROR: Image Display Gop->Blt [%d]\n", Status);
             goto cleanup;
-        } 
+        }
 
         SetCursorPosition(  0, MaxRows - 1 );
     } else {
@@ -295,14 +295,14 @@ DisplayImage( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
         Status = Gop->Blt( Gop,
                            BltBuffer,
                            EfiBltBufferToVideo,
-                           0, 0,                                                        // Source X,Y 
-                           0, ImagePixelDelta + ((CurRow + 1) * EFI_GLYPH_HEIGHT),      // Destination X,Y 
-                           BmpHeader->PixelWidth, BmpHeader->PixelHeight, 
+                           0, 0,                                                        // Source X,Y
+                           0, ImagePixelDelta + ((CurRow + 1) * EFI_GLYPH_HEIGHT),      // Destination X,Y
+                           BmpHeader->PixelWidth, BmpHeader->PixelHeight,
                            0 );
         if (EFI_ERROR (Status)) {
             Print(L"ERROR: Image Display Gop->Blt [%d]\n", Status);
             goto cleanup;
-        } 
+        }
         SetCursorPosition(  0, CurRow + ImageRows );
     }
 
@@ -349,29 +349,22 @@ PrintBMPHeader( EFI_HANDLE *BmpBuffer )
 // Check that the image is a valid supported BMP
 //
 EFI_STATUS
-CheckBMPHeader( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop, 
+CheckBMPHeader( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
                 EFI_HANDLE *BmpBuffer,
                 INTN   BmpImageSize )
 {
     EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
     BMP_IMAGE_HEADER *BmpHeader;
-    BMP_COLOR_MAP *BmpColorMap;
     EFI_STATUS Status = EFI_SUCCESS;
     UINT32 BltBufferSize;
-    UINT32 ColorMapNum;
     UINT32 DataSize;
     UINT32 DataSizePerLine;
     UINTN  SizeOfInfo;
-    UINT8  *Image;
 
     // check parameters
     if (BmpBuffer == NULL) {
         return EFI_INVALID_PARAMETER;
-    } 
-    // if (BmpImageSize < sizeof (BMP_IMAGE_HEADER)) {
-        // Print(L"ERROR: BmpImageSize too small\n");
-        // return EFI_INVALID_PARAMETER;
-    // }
+    }
 
     BmpHeader = (BMP_IMAGE_HEADER *) BmpBuffer;
 
@@ -381,40 +374,12 @@ CheckBMPHeader( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
         return EFI_UNSUPPORTED;
     }
 
-    // BITMAPINFOHEADER format unsupported
-    // if (BmpHeader->HeaderSize != sizeof (BMP_IMAGE_HEADER) \
-        // - ((UINTN) &(((BMP_IMAGE_HEADER *)0)->HeaderSize))) {
-        // Print(L"ERROR: Unsupported BITMAPFILEHEADER\n");
-        // return EFI_UNSUPPORTED;
-    // }
-
     // compression type not 0
     if (BmpHeader->CompressionType != 0) {
         Print(L"ERROR: Compression type not 0\n");
         return EFI_UNSUPPORTED;
     }
 
-    // if ((BmpHeader->PixelHeight == 0) || (BmpHeader->PixelWidth == 0)) {
-        // Print(L"ERROR: BMP Header PixelHeight or PixelWidth is 0\n");
-        // return EFI_UNSUPPORTED;
-    // }
-
-    // // data size in each line must be 4 byte aligned
-    // Status = SafeUint32Mult( BmpHeader->PixelWidth,
-                             // BmpHeader->BitPerPixel,
-                             // &DataSizePerLine );
-    // if (EFI_ERROR (Status)) {
-        // Print(L"ERROR: Invalid BMP. PixelWidth or BitPerPixel\n");
-        // return EFI_UNSUPPORTED;
-    // }
-
-    // Status = SafeUint32Add( DataSizePerLine, 
-                            // 31,
-                            // &DataSizePerLine );
-    // if (EFI_ERROR (Status)) {
-        // Print(L"ERROR: Invalid BMP. DataSizePerLine\n");
-        // return EFI_UNSUPPORTED;
-    // }
 
     DataSizePerLine = (DataSizePerLine >> 3) &(~0x3);
     Status = SafeUint32Mult( DataSizePerLine,
@@ -433,49 +398,13 @@ CheckBMPHeader( EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop,
         return EFI_UNSUPPORTED;
     }
 
-    // if ((BmpHeader->Size != BmpImageSize) || 
-        // (BmpHeader->Size < BmpHeader->ImageOffset) ||
-        // (BmpHeader->Size - BmpHeader->ImageOffset !=  DataSize)) {
-        // Print(L"ERROR: Invalid image size\n");
-        // return EFI_UNSUPPORTED;
-    // }
-
-    // calculate colormap offset in the image.
-    Image       = (UINT8 *)BmpBuffer;
-    BmpColorMap = (BMP_COLOR_MAP *) (Image + sizeof (BMP_IMAGE_HEADER));
-    // if (BmpHeader->ImageOffset < sizeof (BMP_IMAGE_HEADER)) {
-        // Print(L"ERROR: Invalid colormap offset\n");
-        // return EFI_UNSUPPORTED;
-    // }
-
-    if (BmpHeader->ImageOffset > sizeof (BMP_IMAGE_HEADER)) {
-        switch (BmpHeader->BitPerPixel) {
-            case 1:
-                ColorMapNum = 2;
-                break;
-            case 4:
-                ColorMapNum = 16;
-                break;
-            case 8:
-                ColorMapNum = 256;
-                break;
-            default:
-                ColorMapNum = 0;
-                break;
-        }
-        // if (BmpHeader->ImageOffset - sizeof (BMP_IMAGE_HEADER) != sizeof (BMP_COLOR_MAP) * ColorMapNum) {
-            // Print(L"ERROR: Invalid colormap offset\n");
-            // return EFI_UNSUPPORTED;
-        // }
-    }
-
     // image size less than screen size
-    Gop->QueryMode( Gop, 
-                    Gop->Mode->Mode, 
-                    &SizeOfInfo, 
+    Gop->QueryMode( Gop,
+                    Gop->Mode->Mode,
+                    &SizeOfInfo,
                     &Info );
 
-    if ((BmpHeader->PixelWidth > (Info->HorizontalResolution - EFI_GLYPH_WIDTH*5)) || 
+    if ((BmpHeader->PixelWidth > (Info->HorizontalResolution - EFI_GLYPH_WIDTH*5)) ||
         (BmpHeader->PixelHeight > (Info->VerticalResolution - EFI_GLYPH_HEIGHT*5))) {
             Print(L"ERROR: Image too big for screen at current resolution\n");
             return EFI_UNSUPPORTED;
@@ -503,14 +432,14 @@ Usage( BOOLEAN ErrorMsg )
         Print(L"ERROR: Unknown option(s).\n");
     }
 
-    Print(L"Usage: DisplayBMP [-v | --verbose] BMPfile\n"); 
-    Print(L"       DisplayBMP [-V | --version]\n"); 
+    Print(L"Usage: DisplayBMP [-v | --verbose] BMPfile\n");
+    Print(L"       DisplayBMP [-V | --version]\n");
 }
 
 
 INTN
 EFIAPI
-ShellAppMain( UINTN Argc, 
+ShellAppMain( UINTN Argc,
               CHAR16 **Argv )
 {
     EFI_GRAPHICS_OUTPUT_PROTOCOL *Gop;
@@ -550,27 +479,27 @@ ShellAppMain( UINTN Argc,
         return Status;
     }
 
-    // Check last argument is not an option!  
+    // Check last argument is not an option!
     if (Argv[Argc-1][0] == L'-') {
         Usage(TRUE);
         return Status;
     }
 
     // Open the file (has to be LAST arguement on command line)
-    Status = ShellOpenFileByName( Argv[Argc - 1], 
+    Status = ShellOpenFileByName( Argv[Argc - 1],
                                   &FileHandle,
                                   EFI_FILE_MODE_READ , 0);
     if (EFI_ERROR (Status)) {
         Print(L"ERROR: Could not open specified file [%d]\n", Status);
         return Status;
-    }            
+    }
 
     // Allocate buffer for file contents
-    FileInfo = ShellGetFileInfo( FileHandle );    
+    FileInfo = ShellGetFileInfo( FileHandle );
     FileBuffer = AllocateZeroPool( (UINTN)FileInfo->FileSize );
     if (FileBuffer == NULL) {
         Print(L"ERROR: File buffer. No memory resources\n");
-        return (SHELL_OUT_OF_RESOURCES);   
+        return (SHELL_OUT_OF_RESOURCES);
     }
 
     // Read file contents into allocated buffer
@@ -581,8 +510,8 @@ ShellAppMain( UINTN Argc,
     if (EFI_ERROR (Status)) {
         Print(L"ERROR: ShellReadFile failed [%d]\n", Status);
         goto cleanup;
-    }            
-  
+    }
+
     ShellCloseFile( &FileHandle );
 
     // Try locating GOP by handle
@@ -594,7 +523,7 @@ ShellAppMain( UINTN Argc,
     if (EFI_ERROR (Status)) {
         Print(L"ERROR: No GOP handles found via LocateHandleBuffer\n");
         goto cleanup;
-    } 
+    }
 
 #ifdef DEBUG
     Print(L"Found %d GOP handles via LocateHandleBuffer\n", HandleCount);
@@ -603,12 +532,12 @@ ShellAppMain( UINTN Argc,
     // Make sure we use the correct GOP handle
     Gop = NULL;
     for (UINTN Handle = 0; Handle < HandleCount; Handle++) {
-        Status = gBS->HandleProtocol( Handles[Handle], 
-                                      &gEfiDevicePathProtocolGuid, 
+        Status = gBS->HandleProtocol( Handles[Handle],
+                                      &gEfiDevicePathProtocolGuid,
                                       (VOID **)&Dpp );
         if (!EFI_ERROR(Status)) {
             Status = gBS->HandleProtocol( Handles[Handle],
-                                          &gEfiGraphicsOutputProtocolGuid, 
+                                          &gEfiGraphicsOutputProtocolGuid,
                                           (VOID **)&Gop );
             if (!EFI_ERROR(Status)) {
                break;
@@ -631,7 +560,7 @@ ShellAppMain( UINTN Argc,
     }
 
     DisplayImage( Gop, FileBuffer );
-    
+
 cleanup:
     FreePool( FileBuffer );
     return Status;
