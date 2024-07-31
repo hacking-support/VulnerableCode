@@ -1,10 +1,10 @@
 
 [Defines]
-  PLATFORM_NAME                  = VulnerableCode
+  PLATFORM_NAME                  = Stage1Apps
   PLATFORM_GUID                  = ade24068-af7f-4d64-bb29-7f5e108bc896
   PLATFORM_VERSION               = 1.00
   DSC_SPECIFICATION              = 0x00010006
-  OUTPUT_DIRECTORY               = Build/VulnerableCode
+  OUTPUT_DIRECTORY               = Build/Stage1Apps
   SUPPORTED_ARCHITECTURES        = IA32|X64|EBC
   BUILD_TARGETS                  = DEBUG|RELEASE|NOOPT
   SKUID_IDENTIFIER               = DEFAULT
@@ -70,5 +70,5 @@
 [Components]
 
 #### Applications
-  VulnerableCode/DisplayBMP/DisplayBMP.inf
-  
+  VulnerableCode/Stage1Apps//DisplayBMP/DisplayBMP.inf
+  VulnerableCode/Stage1Apps/VulnShellApplication/VulnShellApplication.inf

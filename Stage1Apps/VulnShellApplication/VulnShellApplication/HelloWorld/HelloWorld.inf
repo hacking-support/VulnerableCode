@@ -1,0 +1,26 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = HelloWorld
+  FILE_GUID                      = 4e29ef95-3b1c-450d-894f-51de0a3c577c
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 1.0
+  VALID_ARCHITECTURES            = X64
+  ENTRY_POINT                    = ShellCEntryLib
+
+
+[Sources]
+  HelloWorld.c 
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ShellPkg/ShellPkg.dec 
+
+[LibraryClasses]
+  ShellCEntryLib  
+  ShellLib
+  BaseLib
+  BaseMemoryLib
+  UefiLib
+  UefiApplicationEntryPoint
+  

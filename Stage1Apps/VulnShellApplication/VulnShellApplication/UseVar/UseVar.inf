@@ -1,0 +1,26 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = UseVar
+  FILE_GUID                      = d27afbb8-96d6-491a-841c-0c913c57c347
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 1.0
+  VALID_ARCHITECTURES            = X64
+  ENTRY_POINT                    = ShellCEntryLib
+
+
+[Sources]
+  UseVar.c 
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  ShellPkg/ShellPkg.dec 
+
+[LibraryClasses]
+  ShellCEntryLib  
+  ShellLib
+  BaseLib
+  BaseMemoryLib
+  UefiLib
+  UefiApplicationEntryPoint
+  

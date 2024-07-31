@@ -1,7 +1,7 @@
 
 [Defines]
   DEC_SPECIFICATION              = 0x00010005
-  PACKAGE_NAME                   = VulnerableCode
+  PACKAGE_NAME                   = Stage1Apps
   PACKAGE_GUID                   = 746687cc-9f23-46c3-8d45-487a995eedb4
   PACKAGE_VERSION                = 1.00
 

@@ -1,0 +1,21 @@
+# Variables defined to be used during the build process
+[Defines]
+  INF_VERSION       = 1.25
+  BASE_NAME         = PrintAddr
+  FILE_GUID         = e0956d2c-c033-22af-8ef2-76c9d30528ee
+  MODULE_TYPE       = UEFI_APPLICATION
+  VERSION_STRING    = 1.0
+  ENTRY_POINT       = EntryPoint
+
+# Source code
+[Sources]
+  PrintAddr.c
+
+# Required packages
+[Packages]
+  MdePkg/MdePkg.dec            # Contains Uefi and UefiLib
+
+# Required Libraries
+[LibraryClasses]
+  UefiApplicationEntryPoint    # Uefi application entry point
+  UefiLib                      # UefiLib
