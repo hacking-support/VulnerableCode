@@ -1,0 +1,6 @@
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = VulnGetVarDriver
+  PACKAGE_GUID                   = 80085b29-5a88-411b-b2ee-14b445f7fe19
+  PACKAGE_VERSION                = 1.0
+
