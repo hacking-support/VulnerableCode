@@ -1,10 +1,10 @@
 /** @file
   TODO: Brief Description of UEFI Driver VulnGetVarDriver
-  
+
   TODO: Detailed Description of UEFI Driver VulnGetVarDriver
 
   TODO: Copyright for UEFI Driver VulnGetVarDriver
-  
+
   TODO: License for UEFI Driver VulnGetVarDriver
 
 **/
@@ -17,7 +17,8 @@
 //
 // Libraries
 //
-#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiBootServicesTableLib.h> // gBs
+#include <Library/UefiRuntimeServicesTableLib.h> // gRs
 #include <Library/MemoryAllocationLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/BaseLib.h>
@@ -38,11 +39,11 @@
 //
 // Produced Protocols
 //
-#include <Protocol/SimpleTextOut.h>
 
 //
 // Guids
 //
+#include <Guid/GlobalVariable.h>
 
 //
 // Driver Version
@@ -58,6 +59,5 @@ extern EFI_DRIVER_BINDING_PROTOCOL  gVulnGetVarDriverDriverBinding;
 // Include files with function prototypes
 //
 #include "DriverBinding.h"
-#include "SimpleTextOutput.h"
 
 #endif

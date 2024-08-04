@@ -12,7 +12,6 @@
 #include "VulnGetVarDriver.h"
 
 UINTN runOnce ;
-EFI_BOOT_SERVICES *gBootServices;
 
 extern EFI_HANDLE	gImageHandle;
 extern EFI_SYSTEM_TABLE	*gSystemTable;
@@ -103,12 +102,25 @@ PrintMain  (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  for (UINT16 i = 0; i < 5; i++)
+  EFI_STATUS  Status;
+  Status = EFI_SUCCESS;
+  EFI_GUID   Guid = EFI_GLOBAL_VARIABLE;
+  UINTN DataSize = 128;
+
+  char Buffer[128] = {0};
+  UINT16 *VarName = L"VulnVarOne";
+
+
+  Status = gRT->GetVariable(VarName, &Guid, NULL, &DataSize, Buffer);
+
+  for (UINT16 i = 0; i < 2; i++)
   {
-    Print(L"SIMPLE DXE PRINT TEST\n");
+    Print(L"Welcome to DVUEFI -- Stage 3");
+    Print(L"Variable '%s' set to %s", VarName, Buffer);
     gBS->Stall (1000000);
   }
-  return EFI_SUCCESS;
+
+  return Status;
 }
 
 VOID

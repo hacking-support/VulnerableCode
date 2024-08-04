@@ -14,8 +14,6 @@
 [Sources]
   VulnGetVarDriver.h
   VulnGetVarDriver.c
-  SimpleTextOutput.c
-  SimpleTextOutput.h
 
 [LibraryClasses]
   UefiDriverEntryPoint
