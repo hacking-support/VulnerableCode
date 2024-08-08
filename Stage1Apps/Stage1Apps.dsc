@@ -71,4 +71,4 @@
 
 #### Applications
   VulnerableCode/Stage1Apps//DisplayBMP/DisplayBMP.inf
-  VulnerableCode/Stage1Apps/VulnShellApplication/VulnShellApplication.inf
+  VulnerableCode/Stage1Apps/Unhexlify/Unhexlify.inf

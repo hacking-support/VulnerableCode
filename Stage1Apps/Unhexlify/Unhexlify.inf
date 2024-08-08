@@ -1,7 +1,7 @@
 
 [Defines]
   INF_VERSION                    = 0x00010005
-  BASE_NAME                      = VulnShellApplication
+  BASE_NAME                      = Unhexlify
   FILE_GUID                      = 6987936E-ED34-44db-AE97-1FA5E4ED2116
   MODULE_TYPE                    = UEFI_APPLICATION
   VERSION_STRING                 = 1.0
@@ -10,7 +10,7 @@
 
 
 [Sources]
-  VulnShellApplication.c
+  Unhexlify.c
 
 [Packages]
   MdePkg/MdePkg.dec

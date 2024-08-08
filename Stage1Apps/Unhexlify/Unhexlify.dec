@@ -1,0 +1,9 @@
+#Based on the example code located at https://blog.fpmurphy.com/2008/04/uefi-shell-application-examples.html
+#https://web.archive.org/web/20220118022236/https://blog.fpmurphy.com/2008/04/uefi-shell-application-examples.html
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = Unhexlify
+  PACKAGE_GUID                   = 80085b29-5a88-411b-b2ee-14b445f7ff19
+  PACKAGE_VERSION                = 1.0
+

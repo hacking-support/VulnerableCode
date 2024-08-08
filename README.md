@@ -5,13 +5,14 @@ This repository holds modified code that was intestinally made vulnerable, the c
 
 # Building Instructions:
 - Place this repository inside the Vulnerable-EDK2 folder on your drive, it should look like this:
- A:\Your_Github_Folder\Vulnerable-EDK2\VulnerableCode
+  DVUEFI/vuln-edk2/VulnerableCode
 
 - To build , run
-  A:\Your_Github_Folder\Vulnerable-EDK2\build -p .\VulnerableCode\VulnerableCode.dsc -a X64
+  Your_Github_Folder/vuln-edk2/VulnerableCode
+  DVUEFI\Vulnerable-EDK2\build -p .\VulnerableCode\VulnerableCode.dsc -a X64
 
 - Once build is done , your built files can be found at
-  A:\Your_Github_Folder\Vulnerable-EDK2\Build\VulnerableCode\DEBUG_VS2019\X64
+  DVUEFI\Vulnerable-EDK2\Build\VulnerableCode\DEBUG_GCC5\X64
 
-#Links to source locations:
+# Links original source:
 https://github.com/fpmurphy/UEFI-Utilities-2019

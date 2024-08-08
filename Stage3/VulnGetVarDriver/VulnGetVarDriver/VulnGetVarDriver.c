@@ -95,6 +95,13 @@ VulnGetVarDriverUnload (
   return EFI_SUCCESS;
 }
 
+#define EFI_TEST_VARIABLE \
+  { \
+    0x1801FBE3, 0xAEF7, 0x42A8, {0xB1, 0xCD, 0xFC, 0x4A, 0xFA, 0xE1, 0x47, 0x16 } \
+  }
+//1801FBE3-AEF7-42A8-B1CD-FC4AFAE14716 guid
+
+
 EFI_STATUS
 EFIAPI
 PrintMain  (
@@ -108,15 +115,17 @@ PrintMain  (
   UINTN DataSize = 128;
 
   char Buffer[128] = {0};
-  UINT16 *VarName = L"VulnVarOne";
+  UINT16 *VarName = L"Example";
 
+  // NON_VOLATILE | BOOTSERVICE_ACCESS | RUNTIME_ACCESS
 
   Status = gRT->GetVariable(VarName, &Guid, NULL, &DataSize, Buffer);
 
-  for (UINT16 i = 0; i < 2; i++)
+  for (UINT16 i = 0; i < 1; i++)
   {
-    Print(L"Welcome to DVUEFI -- Stage 3");
-    Print(L"Variable '%s' set to %s", VarName, Buffer);
+    Print(L"Welcome to DVUEFI -- Stage 3\n");
+    Print(L"Variable '%s' set to %s\n", VarName, Buffer);
+    Print(L"\n");
     gBS->Stall (1000000);
   }
 
